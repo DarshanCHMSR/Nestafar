@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/blocs.dart';
 import '../../models/models.dart';
-import '../../utils/constants.dart';
-import '../../utils/format_utils.dart';
 import '../widgets/menu_item_card.dart';
-import '../widgets/error_widget.dart';
-
+import '../widgets/loading_animations.dart';
+import '../widgets/rating_stars.dart';
 import '../widgets/cart_floating_button.dart';
 import 'cart_screen.dart';
 
@@ -35,57 +33,179 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.restaurant.name),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        actions: [
-          BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              if (state is CartUpdated && state.isNotEmpty) {
-                return IconButton(
-                  icon: Badge(
-                    label: Text(state.itemCount.toString()),
-                    child: const Icon(Icons.shopping_cart),
+      body: CustomScrollView(
+        slivers: [
+          // Modern App Bar with restaurant image
+          SliverAppBar(
+            expandedHeight: 200,
+            pinned: true,
+            backgroundColor: theme.colorScheme.surface,
+            elevation: 0,
+            leading: Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: theme.colorScheme.onSurface,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            actions: [
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  if (state is CartUpdated && state.isNotEmpty) {
+                    return Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: Badge(
+                          label: Text(state.itemCount.toString()),
+                          child: const Icon(Icons.shopping_cart),
+                        ),
+                        onPressed: () => _navigateToCart(context),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    widget.restaurant.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 64,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      );
+                    },
                   ),
-                  onPressed: () => _navigateToCart(context),
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.7),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Restaurant header
-          _RestaurantHeader(restaurant: widget.restaurant),
+          
+          // Restaurant info header
+          SliverToBoxAdapter(
+            child: _buildRestaurantInfo(theme),
+          ),
           
           // Menu content
-          Expanded(
-            child: BlocBuilder<MenuBloc, MenuState>(
-              builder: (context, state) {
-                if (state is MenuLoading) {
-                  return const _LoadingView();
-                } else if (state is MenuLoaded) {
-                  return _MenuListView(
-                    menuItems: state.groupedMenuItems,
-                    restaurant: widget.restaurant,
-                  );
-                } else if (state is MenuEmpty) {
-                  return const _EmptyView();
-                } else if (state is MenuError) {
-                  return _ErrorView(
-                    message: state.message,
-                    onRetry: () {
-                      context.read<MenuBloc>().add(FetchMenuItems(widget.restaurant.id));
-                    },
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+          BlocBuilder<MenuBloc, MenuState>(
+            builder: (context, state) {
+              if (state is MenuLoading) {
+                return SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 400,
+                    child: Center(
+                      child: FoodLoadingAnimation(),
+                    ),
+                  ),
+                );
+              } else if (state is MenuLoaded) {
+                return _buildMenuContent(state.groupedMenuItems, theme);
+              } else if (state is MenuEmpty) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.restaurant_menu,
+                            size: 64,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No Menu Items',
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'This restaurant doesn\'t have any menu items available right now.',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              } else if (state is MenuError) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: theme.colorScheme.error,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Error Loading Menu',
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.message,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<MenuBloc>().add(FetchMenuItems(widget.restaurant.id));
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
+            },
           ),
         ],
       ),
@@ -103,33 +223,13 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  void _navigateToCart(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CartScreen(),
-      ),
-    );
-  }
-}
-
-/// Restaurant header with basic info
-class _RestaurantHeader extends StatelessWidget {
-  final Restaurant restaurant;
-
-  const _RestaurantHeader({required this.restaurant});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+  Widget _buildRestaurantInfo(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(AppConstants.spacingM),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha: 0.2),
-          ),
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(24),
         ),
       ),
       child: Column(
@@ -142,62 +242,79 @@ class _RestaurantHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      restaurant.name,
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      widget.restaurant.name,
+                      style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: AppConstants.spacingXS),
+                    const SizedBox(height: 4),
                     Text(
-                      restaurant.cuisine,
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      widget.restaurant.cuisine,
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-              if (!restaurant.isOpen)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.spacingM,
-                    vertical: AppConstants.spacingS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                  ),
-                  child: Text(
-                    'CLOSED',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onErrorContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: widget.restaurant.isOpen
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  widget.restaurant.isOpen ? 'Open' : 'Closed',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: widget.restaurant.isOpen ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
             ],
           ),
-          
-          const SizedBox(height: AppConstants.spacingM),
-          
+          const SizedBox(height: 16),
           Row(
             children: [
-              _InfoChip(
-                icon: Icons.star,
-                label: restaurant.rating.toStringAsFixed(1),
-                color: Colors.amber,
+              RatingStars(
+                rating: widget.restaurant.rating,
+                size: 20,
               ),
-              const SizedBox(width: AppConstants.spacingS),
-              _InfoChip(
-                icon: Icons.access_time,
-                label: FormatUtils.formatDeliveryTime(restaurant.deliveryTimeMinutes),
-                color: theme.colorScheme.primary,
+              const SizedBox(width: 8),
+              Text(
+                '${widget.restaurant.rating}',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              const SizedBox(width: AppConstants.spacingS),
-              _InfoChip(
-                icon: Icons.delivery_dining,
-                label: FormatUtils.formatPrice(restaurant.deliveryFee),
-                color: theme.colorScheme.secondary,
+              const SizedBox(width: 16),
+              Icon(
+                Icons.access_time,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${widget.restaurant.deliveryTimeMinutes} min',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Icon(
+                Icons.delivery_dining,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '\$${widget.restaurant.deliveryFee.toStringAsFixed(2)}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -205,333 +322,56 @@ class _RestaurantHeader extends StatelessWidget {
       ),
     );
   }
-}
 
-/// Small info chip widget
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.spacingS,
-        vertical: AppConstants.spacingXS,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppConstants.radiusS),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: AppConstants.iconS,
-            color: color,
-          ),
-          const SizedBox(width: AppConstants.spacingXS),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Loading view with shimmer effect
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppConstants.spacingM),
-      itemCount: 8,
-      itemBuilder: (context, index) {
-        return const Padding(
-          padding: EdgeInsets.only(bottom: AppConstants.spacingM),
-          child: MenuItemShimmer(),
-        );
-      },
-    );
-  }
-}
-
-/// Menu list view grouped by categories
-class _MenuListView extends StatelessWidget {
-  final Map<MenuCategory, List<MenuItem>> menuItems;
-  final Restaurant restaurant;
-
-  const _MenuListView({
-    required this.menuItems,
-    required this.restaurant,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final categories = menuItems.keys.toList();
-    
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppConstants.spacingM),
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        final category = categories[index];
-        final items = menuItems[category]!;
-        
-        return _CategorySection(
-          category: category,
-          items: items,
-          restaurant: restaurant,
-        );
-      },
-    );
-  }
-}
-
-/// Category section with header and items
-class _CategorySection extends StatelessWidget {
-  final MenuCategory category;
-  final List<MenuItem> items;
-  final Restaurant restaurant;
-
-  const _CategorySection({
-    required this.category,
-    required this.items,
-    required this.restaurant,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Category header
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingM),
-          child: Row(
+  Widget _buildMenuContent(Map<MenuCategory, List<MenuItem>> groupedMenuItems, ThemeData theme) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final categories = groupedMenuItems.keys.toList();
+          final category = categories[index];
+          final items = groupedMenuItems[category]!;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                MenuCategoryConfig.icons[category.name] ?? '',
-                style: const TextStyle(fontSize: 20),
-              ),
-              const SizedBox(width: AppConstants.spacingS),
-              Text(
-                MenuCategoryConfig.labels[category.name] ?? category.name,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  category.name.toUpperCase(),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
               ),
-              const SizedBox(width: AppConstants.spacingS),
-              Expanded(
-                child: Divider(
-                  color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: items.length,
+                itemBuilder: (context, itemIndex) {
+                  final item = items[itemIndex];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: MenuItemCard(
+                      menuItem: item,
+                      restaurant: widget.restaurant,
+                    ),
+                  );
+                },
               ),
             ],
-          ),
-        ),
-        
-        // Category items
-        ...items.map((item) => Padding(
-          padding: const EdgeInsets.only(bottom: AppConstants.spacingM),
-          child: MenuItemCard(
-            menuItem: item,
-            restaurant: restaurant,
-          ),
-        )).toList(),
-      ],
-    );
-  }
-}
-
-/// Empty state view
-class _EmptyView extends StatelessWidget {
-  const _EmptyView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const EmptyStateWidget(
-      title: 'No Menu Items',
-      message: 'This restaurant doesn\'t have any menu items available right now.',
-      icon: Icons.restaurant_menu,
-    );
-  }
-}
-
-/// Error view with retry option
-class _ErrorView extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-
-  const _ErrorView({
-    required this.message,
-    required this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppErrorWidget(
-      message: message,
-      onRetry: onRetry,
-    );
-  }
-}
-
-/// Menu item shimmer for loading state
-class MenuItemShimmer extends StatefulWidget {
-  const MenuItemShimmer({Key? key}) : super(key: key);
-
-  @override
-  State<MenuItemShimmer> createState() => _MenuItemShimmerState();
-}
-
-class _MenuItemShimmerState extends State<MenuItemShimmer>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-    _animationController.repeat();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.spacingM),
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _ShimmerBox(
-                            width: 160,
-                            height: 18,
-                            animation: _animation,
-                          ),
-                          const SizedBox(height: AppConstants.spacingS),
-                          _ShimmerBox(
-                            width: double.infinity,
-                            height: 14,
-                            animation: _animation,
-                          ),
-                          const SizedBox(height: AppConstants.spacingXS),
-                          _ShimmerBox(
-                            width: 200,
-                            height: 14,
-                            animation: _animation,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppConstants.spacingM),
-                    _ShimmerBox(
-                      width: 80,
-                      height: 80,
-                      animation: _animation,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppConstants.spacingM),
-                Row(
-                  children: [
-                    _ShimmerBox(
-                      width: 60,
-                      height: 16,
-                      animation: _animation,
-                    ),
-                    const Spacer(),
-                    _ShimmerBox(
-                      width: 80,
-                      height: 32,
-                      animation: _animation,
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
+          );
+        },
+        childCount: groupedMenuItems.keys.length,
       ),
     );
   }
-}
 
-/// Individual shimmer box component
-class _ShimmerBox extends StatelessWidget {
-  final double width;
-  final double height;
-  final Animation<double> animation;
-
-  const _ShimmerBox({
-    required this.width,
-    required this.height,
-    required this.animation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppConstants.radiusS),
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            theme.colorScheme.surfaceContainerHighest,
-            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            theme.colorScheme.surfaceContainerHighest,
-          ],
-          stops: [
-            animation.value - 0.3,
-            animation.value,
-            animation.value + 0.3,
-          ].map((stop) => stop.clamp(0.0, 1.0)).toList(),
-        ),
+  void _navigateToCart(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CartScreen(),
       ),
     );
   }

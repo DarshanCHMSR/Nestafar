@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:nestafar/blocs/blocs.dart';
-import 'package:nestafar/repositories/repositories.dart';
-import 'package:nestafar/models/models.dart';
+import '../../lib/blocs/blocs.dart';
+import '../../lib/repositories/repositories.dart';
+import '../../lib/models/models.dart';
 
 // Mock classes
 class MockOrderRepository extends Mock implements IOrderRepository {}
@@ -35,10 +35,11 @@ void main() {
         description: 'Test Description',
         price: 10.99,
         category: MenuCategory.mains,
+        dietaryType: DietaryType.vegetarian,
+        restaurantId: 'restaurant-1',
         imageUrl: 'test.jpg',
         isAvailable: true,
-        dietaryTypes: const [DietaryType.vegetarian],
-        preparationTime: 15,
+        preparationTimeMinutes: 15,
       );
 
       blocTest<CartBloc, CartState>(

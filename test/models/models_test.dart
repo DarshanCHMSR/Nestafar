@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nestafar/models/restaurant.dart';
-import 'package:nestafar/models/menu_item.dart';
-import 'package:nestafar/models/cart_item.dart';
+import 'package:nestafar_food_ordering/models/restaurant.dart';
+import 'package:nestafar_food_ordering/models/menu_item.dart';
+import 'package:nestafar_food_ordering/models/cart_item.dart';
 
 void main() {
   group('Model Tests', () {
@@ -13,7 +13,7 @@ void main() {
           description: 'A test restaurant',
           imageUrl: 'test.jpg',
           rating: 4.5,
-          deliveryTime: '30-40 min',
+          deliveryTimeMinutes: 35,
           deliveryFee: 2.99,
           minimumOrder: 15.0,
           cuisine: 'Italian',
@@ -23,6 +23,7 @@ void main() {
         expect(restaurant.id, '1');
         expect(restaurant.name, 'Test Restaurant');
         expect(restaurant.rating, 4.5);
+        expect(restaurant.deliveryTimeMinutes, 35);
         expect(restaurant.isOpen, true);
       });
 
@@ -33,7 +34,7 @@ void main() {
           description: 'A test restaurant',
           imageUrl: 'test.jpg',
           rating: 4.5,
-          deliveryTime: '30-40 min',
+          deliveryTimeMinutes: 35,
           deliveryFee: 2.99,
           minimumOrder: 15.0,
           cuisine: 'Italian',
@@ -55,17 +56,19 @@ void main() {
           description: 'Classic pizza with tomato and mozzarella',
           price: 12.99,
           category: MenuCategory.mains,
+          dietaryType: DietaryType.vegetarian,
+          restaurantId: 'restaurant1',
           imageUrl: 'pizza.jpg',
           isAvailable: true,
-          dietaryTypes: const [DietaryType.vegetarian],
-          preparationTime: 15,
+          preparationTimeMinutes: 15,
         );
 
         expect(menuItem.id, '1');
         expect(menuItem.name, 'Margherita Pizza');
         expect(menuItem.price, 12.99);
         expect(menuItem.isAvailable, true);
-        expect(menuItem.dietaryTypes, contains(DietaryType.vegetarian));
+        expect(menuItem.dietaryType, DietaryType.vegetarian);
+        expect(menuItem.preparationTimeMinutes, 15);
       });
 
       test('should convert to and from JSON', () {
@@ -75,10 +78,11 @@ void main() {
           description: 'Classic pizza with tomato and mozzarella',
           price: 12.99,
           category: MenuCategory.mains,
+          dietaryType: DietaryType.vegetarian,
+          restaurantId: 'restaurant1',
           imageUrl: 'pizza.jpg',
           isAvailable: true,
-          dietaryTypes: const [DietaryType.vegetarian],
-          preparationTime: 15,
+          preparationTimeMinutes: 15,
         );
 
         final json = menuItem.toJson();
@@ -96,10 +100,11 @@ void main() {
           description: 'Classic pizza with tomato and mozzarella',
           price: 12.99,
           category: MenuCategory.mains,
+          dietaryType: DietaryType.vegetarian,
+          restaurantId: 'restaurant1',
           imageUrl: 'pizza.jpg',
           isAvailable: true,
-          dietaryTypes: const [DietaryType.vegetarian],
-          preparationTime: 15,
+          preparationTimeMinutes: 15,
         );
 
         final cartItem = CartItem(
@@ -119,10 +124,11 @@ void main() {
           description: 'Classic pizza with tomato and mozzarella',
           price: 12.99,
           category: MenuCategory.mains,
+          dietaryType: DietaryType.vegetarian,
+          restaurantId: 'restaurant1',
           imageUrl: 'pizza.jpg',
           isAvailable: true,
-          dietaryTypes: const [DietaryType.vegetarian],
-          preparationTime: 15,
+          preparationTimeMinutes: 15,
         );
 
         final cartItem = CartItem(

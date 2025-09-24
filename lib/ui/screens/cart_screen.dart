@@ -4,7 +4,9 @@ import '../../blocs/blocs.dart';
 import '../../models/models.dart';
 import '../../utils/constants.dart';
 import '../../utils/format_utils.dart';
+import '../themes/app_theme.dart';
 import '../widgets/error_widget.dart';
+
 import 'checkout_screen.dart';
 
 /// Screen displaying cart items and totals
@@ -19,9 +21,33 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.surfaceContainerLow,
       appBar: AppBar(
-        title: const Text('Cart'),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.shopping_cart_rounded,
+                color: AppTheme.primaryColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Your Cart',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.surface,
         elevation: 0,
         actions: [
           BlocBuilder<CartBloc, CartState>(
