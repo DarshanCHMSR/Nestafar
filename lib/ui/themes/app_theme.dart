@@ -46,7 +46,6 @@ class AppTheme {
         error: error,
         errorContainer: errorContainer,
         surface: surface,
-        surfaceVariant: surfaceVariant,
         surfaceContainer: surfaceContainer,
         surfaceContainerHighest: surfaceContainerHighest,
         onSurface: onSurface,
@@ -102,7 +101,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surfaceVariant.withOpacity(0.3),
+        fillColor: surfaceVariant.withValues(alpha: 0.3),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide.none,

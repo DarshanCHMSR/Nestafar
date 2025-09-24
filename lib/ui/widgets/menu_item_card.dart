@@ -100,7 +100,7 @@ class MenuItemCard extends StatelessWidget {
                       height: 80,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppConstants.radiusM),
-                        color: theme.colorScheme.surfaceVariant,
+                        color: theme.colorScheme.surfaceContainerHighest,
                       ),
                       child: menuItem.imageUrl != null && menuItem.imageUrl!.isNotEmpty
                           ? ClipRRect(
@@ -221,7 +221,7 @@ class _PlaceholderImage extends StatelessWidget {
     
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
       ),
       child: Center(

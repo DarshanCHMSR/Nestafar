@@ -50,6 +50,7 @@ class OrderRepositoryImpl implements IOrderRepository {
       status: OrderStatus.confirmed,
       createdAt: DateTime.now(),
       expectedDeliveryTime: DateTime.now().add(const Duration(minutes: 35)),
+      paymentMethod: 'Credit Card', // Default payment method
     );
     
     // Store order
@@ -87,6 +88,7 @@ class OrderRepositoryImpl implements IOrderRepository {
       status: status,
       createdAt: order.createdAt,
       expectedDeliveryTime: order.expectedDeliveryTime,
+      paymentMethod: order.paymentMethod,
     );
     
     _orders[orderId] = updatedOrder;

@@ -102,6 +102,9 @@ class Order extends Equatable {
   
   /// Expected delivery time
   final DateTime expectedDeliveryTime;
+  
+  /// Payment method used for the order
+  final String paymentMethod;
 
   const Order({
     required this.id,
@@ -115,6 +118,7 @@ class Order extends Equatable {
     required this.status,
     required this.createdAt,
     required this.expectedDeliveryTime,
+    required this.paymentMethod,
   });
 
   /// Creates an Order from JSON
@@ -134,6 +138,7 @@ class Order extends Equatable {
       status: _statusFromString(json['status'] as String),
       createdAt: DateTime.parse(json['createdAt'] as String),
       expectedDeliveryTime: DateTime.parse(json['expectedDeliveryTime'] as String),
+      paymentMethod: json['paymentMethod'] as String? ?? 'Credit Card',
     );
   }
 
@@ -151,6 +156,7 @@ class Order extends Equatable {
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),
       'expectedDeliveryTime': expectedDeliveryTime.toIso8601String(),
+      'paymentMethod': paymentMethod,
     };
   }
 
@@ -187,5 +193,6 @@ class Order extends Equatable {
         status,
         createdAt,
         expectedDeliveryTime,
+        paymentMethod,
       ];
 }

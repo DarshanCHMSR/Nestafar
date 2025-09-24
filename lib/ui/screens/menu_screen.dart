@@ -6,7 +6,7 @@ import '../../utils/constants.dart';
 import '../../utils/format_utils.dart';
 import '../widgets/menu_item_card.dart';
 import '../widgets/error_widget.dart';
-import '../widgets/loading_shimmer.dart';
+
 import '../widgets/cart_floating_button.dart';
 import 'cart_screen.dart';
 
@@ -128,7 +128,7 @@ class _RestaurantHeader extends StatelessWidget {
         color: theme.colorScheme.surfaceContainer,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
         ),
       ),
@@ -229,7 +229,7 @@ class _InfoChip extends StatelessWidget {
         vertical: AppConstants.spacingXS,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusS),
       ),
       child: Row(
@@ -342,7 +342,7 @@ class _CategorySection extends StatelessWidget {
               const SizedBox(width: AppConstants.spacingS),
               Expanded(
                 child: Divider(
-                  color: theme.colorScheme.outline.withOpacity(0.3),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
             ],
@@ -429,8 +429,6 @@ class _MenuItemShimmerState extends State<MenuItemShimmer>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppConstants.spacingM),
@@ -524,9 +522,9 @@ class _ShimmerBox extends StatelessWidget {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            theme.colorScheme.surfaceVariant,
-            theme.colorScheme.surfaceVariant.withOpacity(0.5),
-            theme.colorScheme.surfaceVariant,
+            theme.colorScheme.surfaceContainerHighest,
+            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            theme.colorScheme.surfaceContainerHighest,
           ],
           stops: [
             animation.value - 0.3,

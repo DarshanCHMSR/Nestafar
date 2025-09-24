@@ -30,7 +30,7 @@ class RestaurantCard extends StatelessWidget {
               height: 160,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
               ),
               child: restaurant.imageUrl.isNotEmpty
                   ? Image.network(
@@ -154,7 +154,7 @@ class _PlaceholderImage extends StatelessWidget {
     
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
       ),
       child: Center(
         child: Icon(

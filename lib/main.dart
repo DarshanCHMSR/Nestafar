@@ -4,7 +4,7 @@ import 'blocs/blocs.dart';
 import 'services/service_locator.dart';
 import 'repositories/repositories.dart';
 import 'ui/themes/app_theme.dart';
-import 'ui/screens/restaurants_screen.dart';
+import 'utils/app_router.dart';
 
 void main() {
   // Set up dependency injection
@@ -52,7 +52,8 @@ class NestafairApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Nestafar Food Ordering',
         theme: AppTheme.lightTheme,
-        home: const RestaurantsScreen(),
+        initialRoute: AppRoutes.restaurants,
+        onGenerateRoute: AppRouter.generateRoute,
         debugShowCheckedModeBanner: false,
       ),
     );

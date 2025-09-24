@@ -54,9 +54,9 @@ class _RestaurantCardShimmerState extends State<RestaurantCardShimmer>
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      theme.colorScheme.surfaceVariant,
-                      theme.colorScheme.surfaceVariant.withOpacity(0.5),
-                      theme.colorScheme.surfaceVariant,
+                      theme.colorScheme.surfaceContainerHighest,
+                      theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                      theme.colorScheme.surfaceContainerHighest,
                     ],
                     stops: [
                       _animation.value - 0.3,
@@ -149,9 +149,9 @@ class _ShimmerBox extends StatelessWidget {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            theme.colorScheme.surfaceVariant,
-            theme.colorScheme.surfaceVariant.withOpacity(0.5),
-            theme.colorScheme.surfaceVariant,
+            theme.colorScheme.surfaceContainerHighest,
+            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            theme.colorScheme.surfaceContainerHighest,
           ],
           stops: [
             animation.value - 0.3,
