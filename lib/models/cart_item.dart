@@ -1,11 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'menu_item.dart';
 
-part 'cart_item.g.dart';
-
 /// CartItem model representing a menu item with quantity in the cart
-@JsonSerializable()
 class CartItem extends Equatable {
   /// The menu item
   final MenuItem menuItem;
@@ -26,11 +22,22 @@ class CartItem extends Equatable {
   double get totalPrice => menuItem.price * quantity;
 
   /// Creates a CartItem from JSON
-  factory CartItem.fromJson(Map<String, dynamic> json) => 
-      _$CartItemFromJson(json);
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      menuItem: MenuItem.fromJson(json['menuItem'] as Map<String, dynamic>),
+      quantity: json['quantity'] as int,
+      specialInstructions: json['specialInstructions'] as String?,
+    );
+  }
 
   /// Converts CartItem to JSON
-  Map<String, dynamic> toJson() => _$CartItemToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'menuItem': menuItem.toJson(),
+      'quantity': quantity,
+      'specialInstructions': specialInstructions,
+    };
+  }
 
   /// Creates a copy of this cart item with updated quantity
   CartItem copyWith({

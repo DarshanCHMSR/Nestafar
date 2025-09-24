@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/blocs.dart';
 import '../../models/models.dart';
 import '../../utils/constants.dart';
-import '../../utils/format_utils.dart';
+
 import '../widgets/restaurant_card.dart';
 import '../widgets/error_widget.dart';
 import '../widgets/loading_shimmer.dart';

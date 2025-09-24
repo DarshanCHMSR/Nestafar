@@ -1,27 +1,17 @@
 import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'cart_item.dart';
-
-part 'order.g.dart';
 
 /// Enum representing order status
 enum OrderStatus {
-  @JsonValue('pending')
   pending,
-  @JsonValue('confirmed')
   confirmed,
-  @JsonValue('preparing')
   preparing,
-  @JsonValue('out_for_delivery')
   outForDelivery,
-  @JsonValue('delivered')
   delivered,
-  @JsonValue('cancelled')
   cancelled,
 }
 
 /// DeliveryDetails model for order delivery information
-@JsonSerializable()
 class DeliveryDetails extends Equatable {
   /// Customer name
   final String customerName;
@@ -47,11 +37,26 @@ class DeliveryDetails extends Equatable {
   });
 
   /// Creates DeliveryDetails from JSON
-  factory DeliveryDetails.fromJson(Map<String, dynamic> json) => 
-      _$DeliveryDetailsFromJson(json);
+  factory DeliveryDetails.fromJson(Map<String, dynamic> json) {
+    return DeliveryDetails(
+      customerName: json['customerName'] as String,
+      phoneNumber: json['phoneNumber'] as String,
+      address: json['address'] as String,
+      landmark: json['landmark'] as String?,
+      deliveryInstructions: json['deliveryInstructions'] as String?,
+    );
+  }
 
   /// Converts DeliveryDetails to JSON
-  Map<String, dynamic> toJson() => _$DeliveryDetailsToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'customerName': customerName,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'landmark': landmark,
+      'deliveryInstructions': deliveryInstructions,
+    };
+  }
 
   @override
   List<Object?> get props => [
@@ -64,7 +69,6 @@ class DeliveryDetails extends Equatable {
 }
 
 /// Order model representing a complete food order
-@JsonSerializable()
 class Order extends Equatable {
   /// Unique identifier for the order
   final String id;
@@ -114,10 +118,61 @@ class Order extends Equatable {
   });
 
   /// Creates an Order from JSON
-  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'] as String,
+      restaurantId: json['restaurantId'] as String,
+      items: (json['items'] as List)
+          .map((item) => CartItem.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      deliveryDetails: DeliveryDetails.fromJson(
+          json['deliveryDetails'] as Map<String, dynamic>),
+      subtotal: (json['subtotal'] as num).toDouble(),
+      tax: (json['tax'] as num).toDouble(),
+      deliveryFee: (json['deliveryFee'] as num).toDouble(),
+      total: (json['total'] as num).toDouble(),
+      status: _statusFromString(json['status'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      expectedDeliveryTime: DateTime.parse(json['expectedDeliveryTime'] as String),
+    );
+  }
 
   /// Converts Order to JSON
-  Map<String, dynamic> toJson() => _$OrderToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'restaurantId': restaurantId,
+      'items': items.map((item) => item.toJson()).toList(),
+      'deliveryDetails': deliveryDetails.toJson(),
+      'subtotal': subtotal,
+      'tax': tax,
+      'deliveryFee': deliveryFee,
+      'total': total,
+      'status': status.name,
+      'createdAt': createdAt.toIso8601String(),
+      'expectedDeliveryTime': expectedDeliveryTime.toIso8601String(),
+    };
+  }
+
+  /// Helper method to convert string to OrderStatus
+  static OrderStatus _statusFromString(String status) {
+    switch (status) {
+      case 'pending':
+        return OrderStatus.pending;
+      case 'confirmed':
+        return OrderStatus.confirmed;
+      case 'preparing':
+        return OrderStatus.preparing;
+      case 'out_for_delivery':
+        return OrderStatus.outForDelivery;
+      case 'delivered':
+        return OrderStatus.delivered;
+      case 'cancelled':
+        return OrderStatus.cancelled;
+      default:
+        return OrderStatus.pending;
+    }
+  }
 
   @override
   List<Object?> get props => [

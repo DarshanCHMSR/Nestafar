@@ -1,34 +1,22 @@
 import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
-
-part 'menu_item.g.dart';
 
 /// Enum representing dietary preferences
 enum DietaryType {
-  @JsonValue('veg')
   vegetarian,
-  @JsonValue('non_veg')
   nonVegetarian,
-  @JsonValue('vegan')
   vegan,
 }
 
 /// Enum representing menu item categories
 enum MenuCategory {
-  @JsonValue('starters')
   starters,
-  @JsonValue('mains')
   mains,
-  @JsonValue('desserts')
   desserts,
-  @JsonValue('drinks')
   drinks,
-  @JsonValue('sides')
   sides,
 }
 
 /// MenuItem model representing a food item in a restaurant's menu
-@JsonSerializable()
 class MenuItem extends Equatable {
   /// Unique identifier for the menu item
   final String id;
@@ -78,11 +66,70 @@ class MenuItem extends Equatable {
   });
 
   /// Creates a MenuItem from JSON
-  factory MenuItem.fromJson(Map<String, dynamic> json) => 
-      _$MenuItemFromJson(json);
+  factory MenuItem.fromJson(Map<String, dynamic> json) {
+    return MenuItem(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String,
+      price: (json['price'] as num).toDouble(),
+      category: _categoryFromString(json['category'] as String),
+      dietaryType: _dietaryTypeFromString(json['dietaryType'] as String),
+      restaurantId: json['restaurantId'] as String,
+      imageUrl: json['imageUrl'] as String?,
+      isAvailable: json['isAvailable'] as bool? ?? true,
+      preparationTimeMinutes: json['preparationTimeMinutes'] as int? ?? 15,
+      spiceLevel: json['spiceLevel'] as int?,
+    );
+  }
 
   /// Converts MenuItem to JSON
-  Map<String, dynamic> toJson() => _$MenuItemToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'category': category.name,
+      'dietaryType': dietaryType.name,
+      'restaurantId': restaurantId,
+      'imageUrl': imageUrl,
+      'isAvailable': isAvailable,
+      'preparationTimeMinutes': preparationTimeMinutes,
+      'spiceLevel': spiceLevel,
+    };
+  }
+
+  /// Helper method to convert string to MenuCategory
+  static MenuCategory _categoryFromString(String category) {
+    switch (category) {
+      case 'starters':
+        return MenuCategory.starters;
+      case 'mains':
+        return MenuCategory.mains;
+      case 'desserts':
+        return MenuCategory.desserts;
+      case 'drinks':
+        return MenuCategory.drinks;
+      case 'sides':
+        return MenuCategory.sides;
+      default:
+        return MenuCategory.mains;
+    }
+  }
+
+  /// Helper method to convert string to DietaryType
+  static DietaryType _dietaryTypeFromString(String dietaryType) {
+    switch (dietaryType) {
+      case 'veg':
+        return DietaryType.vegetarian;
+      case 'non_veg':
+        return DietaryType.nonVegetarian;
+      case 'vegan':
+        return DietaryType.vegan;
+      default:
+        return DietaryType.vegetarian;
+    }
+  }
 
   @override
   List<Object?> get props => [

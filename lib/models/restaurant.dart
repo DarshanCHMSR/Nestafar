@@ -1,10 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
-
-part 'restaurant.g.dart';
 
 /// Restaurant model representing a food establishment
-@JsonSerializable()
 class Restaurant extends Equatable {
   /// Unique identifier for the restaurant
   final String id;
@@ -50,11 +46,36 @@ class Restaurant extends Equatable {
   });
 
   /// Creates a Restaurant from JSON
-  factory Restaurant.fromJson(Map<String, dynamic> json) => 
-      _$RestaurantFromJson(json);
+  factory Restaurant.fromJson(Map<String, dynamic> json) {
+    return Restaurant(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      cuisine: json['cuisine'] as String,
+      rating: (json['rating'] as num).toDouble(),
+      deliveryTimeMinutes: json['deliveryTimeMinutes'] as int,
+      imageUrl: json['imageUrl'] as String,
+      description: json['description'] as String,
+      deliveryFee: (json['deliveryFee'] as num).toDouble(),
+      minimumOrder: (json['minimumOrder'] as num).toDouble(),
+      isOpen: json['isOpen'] as bool? ?? true,
+    );
+  }
 
   /// Converts Restaurant to JSON
-  Map<String, dynamic> toJson() => _$RestaurantToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'cuisine': cuisine,
+      'rating': rating,
+      'deliveryTimeMinutes': deliveryTimeMinutes,
+      'imageUrl': imageUrl,
+      'description': description,
+      'deliveryFee': deliveryFee,
+      'minimumOrder': minimumOrder,
+      'isOpen': isOpen,
+    };
+  }
 
   @override
   List<Object?> get props => [
