@@ -1,0 +1,33 @@
+name: nestafar_food_ordering
+description: A professional food ordering Flutter application demonstrating BLoC architecture and SOLID principles.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+  get_it: ^7.6.4
+  json_annotation: ^4.8.1
+  intl: ^0.18.1
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^0.3.0
+  bloc_test: ^9.1.4
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/data/
