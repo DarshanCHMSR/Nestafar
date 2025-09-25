@@ -48,60 +48,60 @@ https://github.com/DarshanCHMSR/Nestafar/assets/demo-video.mp4
 
 ### 📸 App Screenshots Gallery
 
-#### 🏠 Home & Restaurant Discovery
+#### 🏠 Main Page - Restaurant Discovery
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-25 235911.png" alt="Restaurant Discovery Screen" width="300"/>
+<img src="screenshots/mainpage.png" alt="Main Page - Restaurant Discovery" width="300"/>
 <br/>
-<em>Modern restaurant discovery interface with dynamic loading and beautiful card layouts</em>
+<em>Elegant home screen showcasing featured restaurants with modern card layouts and search functionality</em>
 </div>
 
-#### 🍕 Menu & Food Selection
+#### � Main Page Extended - Browse More
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-25 235959.png" alt="Menu Selection Screen" width="300"/>
+<img src="screenshots/mainpage2.png" alt="Main Page Extended View" width="300"/>
 <br/>
-<em>Interactive menu display with categorized items and smooth animations</em>
+<em>Extended main page view displaying restaurant categories, filters, and comprehensive browsing options</em>
 </div>
 
-#### 🛒 Cart Management
+#### 🍕 Food Ordering - Menu Selection
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-26 000014.png" alt="Cart Management" width="300"/>
+<img src="screenshots/orderingpage.png" alt="Food Ordering Menu" width="300"/>
 <br/>
-<em>Smart cart operations with real-time calculations and quantity management</em>
+<em>Interactive menu interface with categorized food items, pricing, and add-to-cart functionality</em>
 </div>
 
-#### 💳 Enhanced Checkout Experience
+#### � Enhanced Ordering Experience
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-26 000028.png" alt="Checkout Process" width="300"/>
+<img src="screenshots/ordering2.png" alt="Enhanced Ordering Interface" width="300"/>
 <br/>
-<em>Multi-step checkout with form validation and payment method selection</em>
+<em>Advanced ordering screen with detailed item customization and quantity management</em>
 </div>
 
-#### 🎫 Promo Code Integration
+#### 🛒 Shopping Cart Management
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-26 000041.png" alt="Promo Code Application" width="300"/>
+<img src="screenshots/cart.png" alt="Shopping Cart" width="300"/>
 <br/>
-<em>Real-time discount application with animated feedback</em>
+<em>Smart cart interface with real-time calculations, item modifications, and total breakdown</em>
 </div>
 
-#### 📋 Order Confirmation
+#### � Checkout Process
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-26 000053.png" alt="Order Confirmation" width="300"/>
+<img src="screenshots/checkout.png" alt="Checkout Screen" width="300"/>
 <br/>
-<em>Professional order confirmation with detailed summary and animations</em>
+<em>Comprehensive checkout experience with order summary, promo codes, and payment options</em>
 </div>
 
-#### 🚚 Order Tracking
+#### 🚚 Delivery Details
 <div align="center">
-<img src="screenshots/Screenshot 2025-09-26 000103.png" alt="Order Tracking" width="300"/>
+<img src="screenshots/deliverydetails.png" alt="Delivery Details" width="300"/>
 <br/>
-<em>Real-time order status updates with delivery time estimation</em>
+<em>Detailed delivery information screen with address management and delivery time estimation</em>
 </div>
 
-#### 🎨 Additional Interface
+#### 💰 Payment Gateway
 <div align="center">
-<img src="screenshots/image.png" alt="Additional App Interface" width="300"/>
+<img src="screenshots/payment.png" alt="Payment Processing" width="300"/>
 <br/>
-<em>Additional app interface showcasing modern Material Design 3 elements</em>
+<em>Secure payment interface with multiple payment methods and transaction processing</em>
 </div>
 
 ### 🌟 Visual Design Highlights
