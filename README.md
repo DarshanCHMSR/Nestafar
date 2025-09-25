@@ -647,7 +647,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Developer
 
 **Darshan CHMSR**  
-📧 Email: [darshanmishra2301@gmail.com](mailto:darshanmishra2301@gmail.com)  
+📧 Email: [chdarshan99@gmail.com](mailto:chdarshan99@gmail.com)  
 🔗 GitHub: [@DarshanCHMSR](https://github.com/DarshanCHMSR)
 
 ---
