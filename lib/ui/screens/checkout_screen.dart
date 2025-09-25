@@ -913,37 +913,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> with TickerProviderStat
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(Icons.shopping_bag, color: Colors.white),
+                child: Icon(Icons.shopping_bag, color: Colors.white, size: 18),
               ),
-              const SizedBox(width: 12),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Place Order',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 10),
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Place Order',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    '\$${_total.toStringAsFixed(2)}',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w600,
+                    Text(
+                      '\$${_total.toStringAsFixed(2)}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
