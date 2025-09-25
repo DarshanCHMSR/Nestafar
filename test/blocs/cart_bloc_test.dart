@@ -47,7 +47,6 @@ void main() {
         build: () => cartBloc,
         act: (bloc) => bloc.add(AddItemToCart(
           menuItem: mockMenuItem,
-          restaurantId: 'restaurant-1',
         )),
         expect: () => [
           isA<CartUpdated>()
@@ -71,7 +70,6 @@ void main() {
         ),
         act: (bloc) => bloc.add(AddItemToCart(
           menuItem: mockMenuItem,
-          restaurantId: 'restaurant-1',
         )),
         expect: () => [
           isA<CartUpdated>()
@@ -88,10 +86,11 @@ void main() {
         description: 'Test Description',
         price: 10.99,
         category: MenuCategory.mains,
+        dietaryType: DietaryType.vegetarian,
+        restaurantId: 'restaurant-1',
         imageUrl: 'test.jpg',
         isAvailable: true,
-        dietaryTypes: const [DietaryType.vegetarian],
-        preparationTime: 15,
+        preparationTimeMinutes: 15,
       );
 
       blocTest<CartBloc, CartState>(
@@ -106,7 +105,7 @@ void main() {
           ],
           restaurantId: 'restaurant-1',
         ),
-        act: (bloc) => bloc.add(RemoveItemFromCart(menuItem: mockMenuItem)),
+        act: (bloc) => bloc.add(RemoveItemFromCart(mockMenuItem.id)),
         expect: () => [
           isA<CartUpdated>()
               .having((state) => state.items.length, 'items length', 0),
@@ -125,7 +124,7 @@ void main() {
           ],
           restaurantId: 'restaurant-1',
         ),
-        act: (bloc) => bloc.add(RemoveItemFromCart(menuItem: mockMenuItem)),
+        act: (bloc) => bloc.add(RemoveItemFromCart(mockMenuItem.id)),
         expect: () => [
           isA<CartUpdated>()
               .having((state) => state.items.length, 'items length', 1)
@@ -141,10 +140,11 @@ void main() {
         description: 'Test Description',
         price: 10.99,
         category: MenuCategory.mains,
+        dietaryType: DietaryType.vegetarian,
+        restaurantId: 'restaurant-1',
         imageUrl: 'test.jpg',
         isAvailable: true,
-        dietaryTypes: const [DietaryType.vegetarian],
-        preparationTime: 15,
+        preparationTimeMinutes: 15,
       );
 
       blocTest<CartBloc, CartState>(
@@ -161,9 +161,7 @@ void main() {
         ),
         act: (bloc) => bloc.add(ClearCart()),
         expect: () => [
-          isA<CartUpdated>()
-              .having((state) => state.items.length, 'items length', 0)
-              .having((state) => state.restaurantId, 'restaurant id', null),
+          isA<CartInitial>(),
         ],
       );
     });

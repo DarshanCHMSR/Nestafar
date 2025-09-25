@@ -57,7 +57,7 @@ void main() {
         build: () => cartBloc,
         act: (bloc) => bloc.add(ClearCart()),
         expect: () => [
-          isA<CartUpdated>()
+          isA<CartInitial>()
         ],
       );
     });

@@ -4,9 +4,9 @@ import '../../blocs/blocs.dart';
 import '../../models/models.dart';
 import '../../utils/constants.dart';
 import '../themes/app_theme.dart';
-import '../widgets/restaurant_card.dart';
+import '../widgets/modern_restaurant_card.dart';
+import '../widgets/modern_header.dart';
 import '../widgets/error_widget.dart';
-
 import '../widgets/loading_animations.dart';
 import 'menu_screen.dart';
 
@@ -30,90 +30,46 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surfaceContainerLow,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.restaurant_menu,
-                color: AppTheme.primaryColor,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Nestafar',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.onSurface,
-                  ),
-                ),
-                Text(
-                  'Delicious food delivered',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        backgroundColor: AppTheme.surface,
-        elevation: 0,
-        toolbarHeight: 70,
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Search functionality
+      body: Column(
+        children: [
+          ModernAppHeader(
+            onLocationTap: () {
+              // TODO: Implement location picker
             },
-            icon: Icon(
-              Icons.search_rounded,
-              color: AppTheme.onSurface,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              // Filter functionality
+            onSearchTap: () {
+              // TODO: Implement search
             },
-            icon: Icon(
-              Icons.tune_rounded,
-              color: AppTheme.onSurface,
-            ),
+            onProfileTap: () {
+              // TODO: Implement profile navigation
+            },
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          context.read<RestaurantsBloc>().add(const RefreshRestaurants());
-        },
-        child: BlocBuilder<RestaurantsBloc, RestaurantsState>(
-          builder: (context, state) {
-            if (state is RestaurantsLoading) {
-              return const _LoadingView();
-            } else if (state is RestaurantsLoaded) {
-              return _RestaurantsListView(restaurants: state.restaurants);
-            } else if (state is RestaurantsEmpty) {
-              return const _EmptyView();
-            } else if (state is RestaurantsError) {
-              return _ErrorView(
-                message: state.message,
-                onRetry: () {
-                  context.read<RestaurantsBloc>().add(const FetchRestaurants());
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<RestaurantsBloc>().add(const RefreshRestaurants());
+              },
+              child: BlocBuilder<RestaurantsBloc, RestaurantsState>(
+                builder: (context, state) {
+                  if (state is RestaurantsLoading) {
+                    return const _LoadingView();
+                  } else if (state is RestaurantsLoaded) {
+                    return _RestaurantsListView(restaurants: state.restaurants);
+                  } else if (state is RestaurantsEmpty) {
+                    return const _EmptyView();
+                  } else if (state is RestaurantsError) {
+                    return _ErrorView(
+                      message: state.message,
+                      onRetry: () {
+                        context.read<RestaurantsBloc>().add(const FetchRestaurants());
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
                 },
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -138,18 +94,16 @@ class _LoadingView extends StatelessWidget {
           ),
         ),
         
-        // Shimmer cards
+        // Modern skeleton cards
         Expanded(
           flex: 3,
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: 3,
+            itemCount: 4,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: ShimmerLoading(
-                  child: _LoadingCard(),
-                ),
+              return const Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: RestaurantCardSkeleton(),
               );
             },
           ),
@@ -159,83 +113,6 @@ class _LoadingView extends StatelessWidget {
   }
 }
 
-/// Loading card placeholder
-class _LoadingCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 280,
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 180,
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerHigh,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                topRight: Radius.circular(AppTheme.cardBorderRadius),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 20,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 16,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: AppTheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: AppTheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// Enhanced list view of restaurants with staggered animations
 class _RestaurantsListView extends StatefulWidget {
@@ -340,11 +217,37 @@ class _RestaurantsListViewState extends State<_RestaurantsListView>
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      _CategoryChip(label: 'All', isSelected: true),
-                      _CategoryChip(label: 'Fast Food'),
-                      _CategoryChip(label: 'Italian'),
-                      _CategoryChip(label: 'Asian'),
-                      _CategoryChip(label: 'Healthy'),
+                      _CategoryChip(
+                        label: 'All', 
+                        isSelected: true,
+                        onTap: () {
+                          // TODO: Filter by all restaurants
+                        },
+                      ),
+                      _CategoryChip(
+                        label: 'Fast Food',
+                        onTap: () {
+                          // TODO: Filter by fast food
+                        },
+                      ),
+                      _CategoryChip(
+                        label: 'Italian',
+                        onTap: () {
+                          // TODO: Filter by Italian cuisine
+                        },
+                      ),
+                      _CategoryChip(
+                        label: 'Asian',
+                        onTap: () {
+                          // TODO: Filter by Asian cuisine
+                        },
+                      ),
+                      _CategoryChip(
+                        label: 'Healthy',
+                        onTap: () {
+                          // TODO: Filter by healthy options
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -368,7 +271,7 @@ class _RestaurantsListViewState extends State<_RestaurantsListView>
                   position: _slideAnimations[animationIndex],
                   child: FadeTransition(
                     opacity: _fadeAnimations[animationIndex],
-                    child: RestaurantCard(
+                    child: ModernRestaurantCard(
                       restaurant: restaurant,
                       onTap: () => _navigateToMenu(context, restaurant),
                     ),

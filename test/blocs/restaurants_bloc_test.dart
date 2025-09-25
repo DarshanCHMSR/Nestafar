@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:nestafar/blocs/blocs.dart';
-import 'package:nestafar/repositories/repositories.dart';
-import 'package:nestafar/models/models.dart';
+import '../../lib/blocs/blocs.dart';
+import '../../lib/repositories/repositories.dart';
+import '../../lib/models/models.dart';
 
 // Mock classes
 class MockRestaurantRepository extends Mock implements IRestaurantRepository {}
@@ -27,7 +27,7 @@ void main() {
       expect(restaurantsBloc.state, const RestaurantsInitial());
     });
 
-    group('LoadRestaurants', () {
+    group('FetchRestaurants', () {
       final mockRestaurants = [
         const Restaurant(
           id: '1',
@@ -35,7 +35,7 @@ void main() {
           description: 'Test Description',
           imageUrl: 'test.jpg',
           rating: 4.5,
-          deliveryTime: '30-40 min',
+          deliveryTimeMinutes: 35,
           deliveryFee: 2.99,
           minimumOrder: 15.0,
           cuisine: 'Italian',
@@ -44,16 +44,16 @@ void main() {
       ];
 
       blocTest<RestaurantsBloc, RestaurantsState>(
-        'emits [RestaurantsLoading, RestaurantsLoaded] when LoadRestaurants is successful',
+        'emits [RestaurantsLoading, RestaurantsLoaded] when FetchRestaurants is successful',
         build: () {
           when(() => mockRepository.getRestaurants())
               .thenAnswer((_) async => mockRestaurants);
           return restaurantsBloc;
         },
-        act: (bloc) => bloc.add(const LoadRestaurants()),
+        act: (bloc) => bloc.add(const FetchRestaurants()),
         expect: () => [
           const RestaurantsLoading(),
-          RestaurantsLoaded(restaurants: mockRestaurants),
+          RestaurantsLoaded(mockRestaurants),
         ],
         verify: (_) {
           verify(() => mockRepository.getRestaurants()).called(1);
@@ -61,16 +61,16 @@ void main() {
       );
 
       blocTest<RestaurantsBloc, RestaurantsState>(
-        'emits [RestaurantsLoading, RestaurantsError] when LoadRestaurants fails',
+        'emits [RestaurantsLoading, RestaurantsError] when FetchRestaurants fails',
         build: () {
           when(() => mockRepository.getRestaurants())
               .thenThrow(Exception('Failed to load restaurants'));
           return restaurantsBloc;
         },
-        act: (bloc) => bloc.add(const LoadRestaurants()),
+        act: (bloc) => bloc.add(const FetchRestaurants()),
         expect: () => [
           const RestaurantsLoading(),
-          const RestaurantsError(message: 'Failed to load restaurants'),
+          const RestaurantsError('Exception: Failed to load restaurants'),
         ],
       );
     });
@@ -83,7 +83,7 @@ void main() {
           description: 'Test Description',
           imageUrl: 'test.jpg',
           rating: 4.5,
-          deliveryTime: '30-40 min',
+          deliveryTimeMinutes: 35,
           deliveryFee: 2.99,
           minimumOrder: 15.0,
           cuisine: 'Italian',
@@ -100,7 +100,7 @@ void main() {
         },
         act: (bloc) => bloc.add(const RefreshRestaurants()),
         expect: () => [
-          RestaurantsLoaded(restaurants: mockRestaurants),
+          RestaurantsLoaded(mockRestaurants),
         ],
       );
     });
